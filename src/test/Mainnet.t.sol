@@ -60,13 +60,16 @@ contract MainnetTest is DSTest {
         comptroller._setCollateralFactor(CToken(address(cvxCToken)), 0.8e18);
 
         //Enter new cToken market on test EOAs
+        vm.stopPrank();
         vm.startPrank(user2);
         address[] memory addrs = new address[](1);
         addrs[0] = address(cvxCToken);
         comptroller.enterMarkets(addrs);
-
+        
+        vm.stopPrank();
         vm.startPrank(user);
         comptroller.enterMarkets(addrs);
+        vm.stopPrank();
     }
 
     function testMintRedeemGivesCorrectAmount() public {
@@ -79,6 +82,7 @@ contract MainnetTest is DSTest {
         emit log_named_uint("liquidity", liquidity);
         emit log_named_uint("liquidity $", liquidity / 1e18);
 
+        vm.stopPrank();
         vm.startPrank(user);
         cvxCToken.redeem(cvxCToken.balanceOf(user));
 
@@ -108,6 +112,7 @@ contract MainnetTest is DSTest {
 
         vm.warp(block.timestamp + NUM_DAYS);
 
+        vm.stopPrank();
         vm.startPrank(user2);
         cvxCToken.getReward(user, user2);
     }
@@ -178,6 +183,7 @@ contract MainnetTest is DSTest {
         crvLpToken.approve(address(cvxCToken), crvDolaAmount * 2);
         cvxCToken.mint(crvDolaAmount * 2);
 
+        vm.stopPrank();
         vm.startPrank(user);
         crvLpToken.approve(address(cvxCToken), crvDolaAmount);
         cvxCToken.mint(crvDolaAmount);
@@ -216,6 +222,7 @@ contract MainnetTest is DSTest {
 
         cvxCToken.approve(user2, uint256(-1));
 
+        vm.stopPrank();
         vm.startPrank(user2);
         cvxCToken.transferFrom(user, user2, cvxCToken.balanceOf(user));
 
